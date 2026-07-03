@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                echo 'Checking out source code'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                dir('Task_10/jenkins-demo') {
+                    sh 'mvn clean package'
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                dir('Task_10/jenkins-demo') {
+                    sh 'mvn test'
+                }
+            }
+            post {
+                always {
+                    junit 'Task_10/jenkins-demo/target/surefire-reports/*.xml'
+                }
+            }
+        }
+
+        stage('Archive Artifact') {
+            steps {
+                dir('Task_10/jenkins-demo') {
+                    archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+                }
+            }
+        }
+    }
+}
