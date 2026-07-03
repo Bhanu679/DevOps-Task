@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                echo 'Checking out source code'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                dir('Task_12/jenkins-demo') {
+                    sh 'mvn clean package'
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                dir('Task_12/jenkins-demo') {
+                    sh 'docker build -t bhanusree03/jenkins-demo:latest .'
+                }
+            }
+        }
+
+        stage('Trivy Scan') {
+            steps {
+                dir('Task_12/jenkins-demo') {
+                    sh '''
+                    trivy image \
+                      --severity CRITICAL \
+                      --exit-code 1 \
+                      bhanusree03/jenkins-demo:latest
+                    '''
+                }
+            }
+        }
+    }
+}
