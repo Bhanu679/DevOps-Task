@@ -1,8 +1,37 @@
-stage('Build') {
-    steps {
-        dir('Task_8/jenkins-demo') {
-            sh 'mvn clean package'
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                echo 'Checking out source code'
+            }
         }
+
+        stage('Build') {
+            steps {
+                dir('Task_8/jenkins-demo') {
+                    sh 'mvn clean package'
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                dir('Task_8/jenkins-demo') {
+                    sh 'mvn test'
+                }
+            }
+        }
+
+        stage('Archive Artifact') {
+            steps {
+                dir('Task_8/jenkins-demo') {
+                    archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
+                }
+            }
+        }
+
     }
 }
-
