@@ -1,0 +1,39 @@
+pipeline {
+
+    agent any
+
+    stages {
+
+        stage('Build') {
+
+            steps {
+
+                sh 'mvn clean verify'
+
+            }
+
+        }
+
+        stage('OWASP Scan') {
+
+            steps {
+
+                sh 'mvn org.owasp:dependency-check-maven:check'
+
+            }
+
+        }
+
+    }
+
+    post {
+
+        always {
+
+            archiveArtifacts artifacts: 'target/dependency-check-report.html', fingerprint: true
+
+        }
+
+    }
+
+}
