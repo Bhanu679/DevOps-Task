@@ -1,0 +1,24 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Gitleaks Scan') {
+            steps {
+                sh 'gitleaks detect --source .'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                sh 'mvn clean package'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh 'docker build -t bhanusree03/gitleaks-demo:latest .'
+            }
+        }
+    }
+}
