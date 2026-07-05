@@ -5,20 +5,35 @@ pipeline {
 
         stage('Gitleaks Scan') {
             steps {
-                sh 'gitleaks detect --source .'
+                dir('Task_16/gitleaks-jenkins-demo/gitleaks-demo') {
+                    sh 'gitleaks dir .'
+                }
             }
         }
 
         stage('Build') {
             steps {
-                sh 'mvn clean package'
+                dir('Task_16/gitleaks-jenkins-demo/gitleaks-demo') {
+                    sh 'mvn clean package'
+                }
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh 'docker build -t bhanusree03/gitleaks-demo:latest .'
+                dir('Task_16/gitleaks-jenkins-demo/gitleaks-demo') {
+                    sh 'docker build -t bhanusree03/gitleaks-demo:latest .'
+                }
             }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed due to detected secrets or build errors.'
         }
     }
 }
